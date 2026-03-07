@@ -34,7 +34,7 @@ const Navigation = () => {
       }}
     >
       {/* Left Links */}
-      <div style={{ display: 'flex', gap: '2rem' }}>
+      <div style={{ display: 'flex', gap: '2rem', display: window.innerWidth < 768 ? 'none' : 'flex' }}>
         <a href="#home" style={{ fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Home</a>
         <a href="#portfolio" style={{ fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Portfolio</a>
       </div>
@@ -45,13 +45,14 @@ const Navigation = () => {
         fontSize: '1.8rem', 
         fontWeight: 'bold', 
         letterSpacing: '2px',
-        color: 'var(--color-primary)' 
+        color: 'var(--color-primary)',
+        margin: window.innerWidth < 768 ? '0 auto' : '0'
       }}>
         HV.
       </a>
 
       {/* Right Links */}
-      <div style={{ display: 'flex', gap: '2rem' }}>
+      <div style={{ display: 'flex', gap: '2rem', display: window.innerWidth < 768 ? 'none' : 'flex' }}>
         <a href="#services" style={{ fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Services</a>
         <a href="#about" style={{ fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>About</a>
         <a href="#contact" style={{ fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Contact</a>

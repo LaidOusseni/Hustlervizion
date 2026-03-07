@@ -151,5 +151,51 @@ button {
 .text-gradient {
   background: linear-gradient(135deg, #fff, #a0a0a0);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* --- Responsive Media Queries --- */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 8%;
+  }
+
+  /* Intro Section Specific */
+  .intro-section h2 {
+    font-size: 1rem !important; /* Scale down intro text */
+    letter-spacing: 0.1em !important;
+  }
+  
+  .intro-section .btn-primary {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+  }
+
+  /* Hero Section */
+  h1 {
+    font-size: clamp(2.2rem, 8vw, 3rem) !important;
+  }
+  
+  /* Section Padding */
+  .section-padding {
+    padding: 60px 0; /* Half padding on mobile */
+  }
+
+  /* Visual Showcase Title */
+  h2 {
+    font-size: 2.5rem !important;
+  }
+
+  /* Navigation adjustments (if needed, but mostly flex handles it) */
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  nav > div {
+    gap: 1rem !important;
+  }
 }
