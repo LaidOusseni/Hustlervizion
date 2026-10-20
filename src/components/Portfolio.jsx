@@ -1,117 +1,308 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Image as ImageIcon } from 'lucide-react';
+import { PROJECTS, CATEGORIES, getProjectsByCategory } from '../data/projects';
+import DriveVideoPlayer from './ui/DriveVideoPlayer';
 
-const portfolioItems = [
-  { id: 1, title: 'Neon Nights', category: 'Music Video', type: 'video', src: '/assets/Show 1.mp4', thumb: '/assets/zily 1.jpeg' },
-  { id: 2, title: 'Urban Elegance', category: 'Brand Content', type: 'image', src: '/assets/Joe 1.jpeg', thumb: '/assets/Joe 1.jpeg' },
-  { id: 3, title: 'The Grand Event', category: 'Event Coverage', type: 'video', src: '/assets/Wedding 1.mp4', thumb: '/assets/Zily 2.jpeg' },
-  { id: 4, title: 'Ocean Vibe', category: 'Cinematic Clip', type: 'video', src: '/assets/Infinity yacht.mp4', thumb: '/assets/Design sans titre (1).png' },
-  { id: 5, title: 'Summer Fest', category: 'Event Coverage', type: 'video', src: '/assets/show 2.mp4', thumb: '/assets/hustler vizion.jpeg' },
-  { id: 6, title: 'Studio Session', category: 'Music Video', type: 'image', src: '/assets/Zily 2.jpeg', thumb: '/assets/Zily 2.jpeg' },
-];
-
-const PortfolioItem = ({ item }) => {
-  const videoRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    if (item.type === 'video' && videoRef.current) {
-      videoRef.current.play().catch(e => console.log(e));
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (item.type === 'video' && videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  };
+// ── Carte de projet ───────────────────────────────────────────────
+const ProjectCard = ({ project, onOpen, size }) => {
+  const hasVideo = !!(project.driveVideoId || project.localVideoSrc);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5 }}
-      className="portfolio-item"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.4 }}
+      className="portfolio-card"
       style={{
         position: 'relative',
         overflow: 'hidden',
-        borderRadius: '8px',
-        aspectRatio: '16/9',
-        backgroundColor: '#111',
-        cursor: 'pointer'
+        borderRadius: '3px',
+        background: '#0f0f0f',
+        cursor: 'pointer',
+        aspectRatio: size === 'small' ? '1/1' : '16/9',
+        border: '1px solid rgba(243,240,234,0.04)',
       }}
+      onClick={() => onOpen(project)}
+      onKeyDown={(e) => e.key === 'Enter' && onOpen(project)}
+      tabIndex={0}
+      role="button"
+      aria-label={`Voir le projet : ${project.title}`}
     >
-      {item.type === 'video' ? (
-        <>
-          <img src={item.thumb} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, zIndex: 1 }} />
-          <video 
-            ref={videoRef}
-            src={item.src} 
-            muted 
-            loop 
-            playsInline
-            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, zIndex: 2, opacity: 0, transition: 'opacity 0.3s' }}
-            onPlay={(e) => { e.target.style.opacity = 1; e.target.previousSibling.style.opacity = 0; }}
-            onPause={(e) => { e.target.style.opacity = 0; e.target.previousSibling.style.opacity = 1; }}
-          />
-        </>
-      ) : (
-        <img src={item.src} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      {/* Media */}
+      {project.coverImage && (
+        <img
+          src={project.coverImage}
+          alt={project.title}
+          loading="lazy"
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover',
+            transition: 'transform 0.6s ease',
+          }}
+        />
       )}
       
-      <div className="portfolio-overlay" style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)',
-        zIndex: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        padding: '1.5rem',
-        opacity: 0,
-        transition: 'opacity 0.3s ease'
-      }}>
-        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.2rem', color: '#fff' }}>{item.title}</h3>
-        <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.category}</p>
+      {/* Overlay gradient */}
+      <div
+        className="portfolio-overlay"
+        style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
+          opacity: 0,
+          transition: 'opacity 0.35s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          padding: '1.5rem',
+        }}
+      >
+        {/* Icône */}
+        <div style={{
+          position: 'absolute',
+          top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {hasVideo ? (
+            <div style={{
+              width: '56px', height: '56px',
+              border: '1px solid rgba(243,240,234,0.3)',
+              borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(8,8,8,0.5)',
+              backdropFilter: 'blur(4px)',
+            }}>
+              <Play size={22} style={{ color: '#fff', marginLeft: '3px' }} />
+            </div>
+          ) : (
+            <div style={{
+              width: '48px', height: '48px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <ImageIcon size={24} style={{ color: 'rgba(243,240,234,0.6)' }} />
+            </div>
+          )}
+        </div>
+
+        {/* Infos texte */}
+        <div>
+          {project.artists && project.artists.length > 0 && (
+            <p style={{ color: 'var(--color-primary)', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+              {project.artists.slice(0, 3).join(' · ')}
+            </p>
+          )}
+          <h3 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: size === 'small' ? '1.2rem' : '1.6rem',
+            fontWeight: '600',
+            color: '#fff',
+            marginBottom: '0.25rem',
+            textShadow: '0 2px 8px rgba(0,0,0,0.6)',
+          }}>
+            {project.title}
+          </h3>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.7rem', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+            {project.serviceType}
+          </p>
+        </div>
       </div>
 
-      <style>{`
-        .portfolio-item:hover .portfolio-overlay {
-          opacity: 1 !important;
-        }
-        .portfolio-item img {
-          transition: transform 0.5s ease;
-        }
-        .portfolio-item:hover img {
-          transform: scale(1.05);
-        }
-      `}</style>
-    </motion.div>
+      {/* Catégorie badge */}
+      <div style={{
+        position: 'absolute',
+        top: '1rem', left: '1rem',
+        fontSize: '0.6rem',
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'var(--color-primary)',
+        background: 'rgba(8,8,8,0.75)',
+        backdropFilter: 'blur(4px)',
+        padding: '4px 10px',
+        borderRadius: '2px',
+        border: '1px solid rgba(215,38,56,0.2)',
+      }}>
+        {project.category}
+      </div>
+
+      {/* Featured badge */}
+      {project.featured && (
+        <div style={{
+          position: 'absolute',
+          top: '1rem', right: '1rem',
+          fontSize: '0.55rem',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: 'rgba(243,240,234,0.5)',
+          background: 'rgba(8,8,8,0.7)',
+          backdropFilter: 'blur(4px)',
+          padding: '4px 10px',
+          borderRadius: '2px',
+        }}>
+          ★ Mis en avant
+        </div>
+      )}
+    </motion.article>
   );
 };
 
-const Portfolio = () => {
+// ── Layout éditorial ─────────────────────────────────────────────
+const EditorialGrid = ({ projects, onOpen }) => {
+  if (projects.length === 0) return (
+    <div style={{ textAlign: 'center', padding: '6rem 0', color: 'var(--color-text-muted)' }}>
+      <p>Aucun projet dans cette catégorie pour le moment.</p>
+    </div>
+  );
+
+  // Séparer les projets Featured des autres pour une mise en page asymétrique
+  const featured = projects.filter(p => p.size === 'hero');
+  const large    = projects.filter(p => p.size === 'large' && !p.featured);
+  const medium   = projects.filter(p => p.size === 'medium');
+  const small    = projects.filter(p => p.size === 'small');
+  const rest     = projects.filter(p => !p.size || (p.size !== 'hero' && !featured.includes(p) && !large.includes(p) && !medium.includes(p) && !small.includes(p)));
+
   return (
-    <section id="portfolio" className="section-padding container">
-      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Our <span style={{ color: 'var(--color-primary)' }}>Work</span></h2>
-        <p style={{ color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-          Explore our latest cinematic projects, music videos and brand campaigns.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Hero items — pleine largeur */}
+      {featured.map(p => (
+        <div key={p.id} style={{ width: '100%', maxHeight: '70vh' }}>
+          <ProjectCard project={p} onOpen={onOpen} size="hero" />
+        </div>
+      ))}
+
+      {/* Grille large — 2 colonnes */}
+      {large.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))',
+          gap: '2rem',
+        }}>
+          {large.map(p => (
+            <ProjectCard key={p.id} project={p} onOpen={onOpen} size="large" />
+          ))}
+        </div>
+      )}
+
+      {/* Grille mixte — 3 colonnes medium + small */}
+      {(medium.length > 0 || small.length > 0) && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+          gap: '1.5rem',
+        }}>
+          {[...medium, ...small].map(p => (
+            <ProjectCard key={p.id} project={p} onOpen={onOpen} size={p.size || 'medium'} />
+          ))}
+        </div>
+      )}
+
+      {/* Reste */}
+      {rest.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))',
+          gap: '1.5rem',
+        }}>
+          {rest.map(p => (
+            <ProjectCard key={p.id} project={p} onOpen={onOpen} size="medium" />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Section Portfolio ────────────────────────────────────────────
+const Portfolio = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  const filteredProjects = getProjectsByCategory(activeCategory);
+
+  return (
+    <section id="portfolio" className="section-padding" style={{ background: 'var(--color-bg)' }}>
+      <div className="container">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.8 }}
+          style={{ marginBottom: '5rem' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+            <div style={{ width: '2rem', height: '1px', background: 'var(--color-primary)' }} />
+            <span style={{ fontSize: '0.65rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--color-primary)', fontWeight: '500' }}>
+              Nos réalisations
+            </span>
+          </div>
+          <h2 style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', fontFamily: 'var(--font-heading)', marginBottom: '1rem' }}>
+            Un regard<br />
+            <span style={{ color: 'var(--color-primary)', fontStyle: 'italic' }}>sur chaque<br />histoire.</span>
+          </h2>
+          <p style={{ color: 'var(--color-text-muted)', maxWidth: '500px', lineHeight: 1.7 }}>
+            Événementiel, institutionnel, lifestyle, sport et graphisme — chaque projet est une nouvelle vision à raconter.
+          </p>
+        </motion.div>
+
+        {/* Filtres */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.6rem',
+            marginBottom: '3.5rem',
+          }}
+          role="group"
+          aria-label="Filtrer par catégorie"
+        >
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.id}
+              className={`filter-tab ${activeCategory === cat.id ? 'active' : ''}`}
+              onClick={() => setActiveCategory(cat.id)}
+              aria-pressed={activeCategory === cat.id}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </motion.div>
+
+        {/* Grille de projets */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <EditorialGrid
+              projects={filteredProjects}
+              onOpen={setSelectedProject}
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-        gap: '2rem'
-      }}>
-        {portfolioItems.map(item => (
-          <PortfolioItem key={item.id} item={item} />
-        ))}
-      </div>
+      {/* Modal lecteur vidéo */}
+      <AnimatePresence>
+        {selectedProject && (
+          <DriveVideoPlayer
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

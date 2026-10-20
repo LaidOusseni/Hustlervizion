@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
+import { useReducedMotion } from 'framer-motion';
 
 const RotatingLogo = (props) => {
   const group = useRef();
   const [isMobile, setIsMobile] = useState(false);
-  
+  const prefersReducedMotion = useReducedMotion();
+
   const { scene } = useGLTF('/assets/logo.glb');
 
   useEffect(() => {
@@ -15,13 +17,15 @@ const RotatingLogo = (props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useFrame((state, delta) => {
-    if (group.current) {
+  useFrame((_, delta) => {
+    if (group.current && !prefersReducedMotion) {
       group.current.rotation.y += delta * 0.5;
     }
   });
 
-  const scale = isMobile ? [0.12, 0.12, 0.12] : [0.2, 0.2, 0.2];
+  const scale = isMobile
+  ? [0.08, 0.08, 0.08]
+  : [0.14, 0.14, 0.14];
 
   return (
     <group ref={group} {...props} dispose={null} scale={scale}>
