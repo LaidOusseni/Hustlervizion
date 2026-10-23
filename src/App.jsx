@@ -5,6 +5,7 @@ import IntroSection from './components/IntroSection';
 import HeroLanding from './components/HeroLanding';
 import ShaderBackground from './components/ui/ShaderBackground';
 import TiltedGridHero from './components/ui/TiltedGridHero';
+import MediaCard from './components/MediaCard';
 import { cdn, cdnVideo } from './data/media';
 
 const navItems = [
@@ -279,23 +280,9 @@ function CategoryPage({ page, category }) {
       )}
 
       <div className="grid-shell">
-        {page.cards.map((card) => {
-          const cover = card.image ?? card.poster;
-          return (
-            <Link
-              key={card.slug}
-              to={`/projets/${category}/${card.slug}`}
-              className={`media-card${cover ? '' : ' image-placeholder'}`}
-              style={cover ? { backgroundImage: `linear-gradient(180deg, rgba(15, 9, 9, 0.05), rgba(15, 9, 9, 0.82)), url('${cover}')` } : undefined}
-            >
-              <div className="media-card-caption">
-                <strong>{card.title}</strong>
-                {card.tag && <span>{card.tag}</span>}
-              </div>
-              <span className="media-card-arrow" aria-hidden="true">→</span>
-            </Link>
-          );
-        })}
+        {page.cards.map((card) => (
+          <MediaCard key={card.slug} card={card} to={`/projets/${category}/${card.slug}`} />
+        ))}
       </div>
 
       <div className="page-nav-row">

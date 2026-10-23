@@ -827,6 +827,31 @@ video.project-detail-media {
   object-fit: contain;
 }
 
+/* Aperçu vidéo au survol d'une carte (comme sur YouTube) */
+.media-card-preview,
+.media-card-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.media-card-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-card-shade {
+  background: linear-gradient(180deg, rgba(15, 9, 9, 0.05), rgba(15, 9, 9, 0.82));
+}
+
+.media-card.is-previewing .media-card-preview,
+.media-card.is-previewing .media-card-shade {
+  opacity: 1;
+}
+
 .project-detail-copy {
   max-width: 780px;
   margin-top: 30px;
