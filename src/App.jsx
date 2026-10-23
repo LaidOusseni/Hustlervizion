@@ -5,6 +5,7 @@ import IntroSection from './components/IntroSection';
 import HeroLanding from './components/HeroLanding';
 import ShaderBackground from './components/ui/ShaderBackground';
 import TiltedGridHero from './components/ui/TiltedGridHero';
+import { cdn, cdnVideo } from './data/media';
 
 const navItems = [
   { to: '/', label: 'Accueil' },
@@ -17,7 +18,7 @@ const navItems = [
 const universCards = [
   { title: 'ÉVÉNEMENTIEL', to: '/evenementiel', image: '/assets/Zily 2.jpeg' },
   { title: 'CLIPS', to: '/clips', image: '/assets/Joe 1.jpeg' },
-  { title: 'IMMOBILIER', to: '/immobilier' },
+  { title: 'IMMOBILIER', to: '/immobilier', image: cdn('immo-sejour-cuisine.jpg') },
 ];
 
 const realizationImages = [
@@ -26,6 +27,10 @@ const realizationImages = [
   { src: '/assets/Joe 1.jpeg', alt: 'Production artistique' },
   { src: '/assets/zily 1.jpeg', alt: 'Portrait artistique' },
 ];
+
+// Photos du même appartement : chaque fiche affiche les autres en dessous.
+const IMMO_PHOTOS = ['immo-chambre.jpg', 'immo-salon.jpg', 'immo-sejour-cuisine.jpg', 'immo-salle-a-manger.jpg'];
+const immoPhotos = (current) => IMMO_PHOTOS.filter((file) => file !== current).map((file) => ({ image: cdn(file) }));
 
 const categoryPages = {
   evenementiel: {
@@ -36,9 +41,13 @@ const categoryPages = {
     accents: ['MUSIQUE', 'ÉVÉNEMENT', 'ART DIRECTION', 'CAPTURE'],
     previous: { to: '/', label: 'Accueil' },
     next: { to: '/clips', label: 'Clips' },
+    showreel: cdnVideo('evenementiel'),
     cards: [
-      { slug: 'miss-mayotte', title: 'Miss Mayotte', tag: 'Élection · Captation événementielle', image: '/assets/zily 1.jpeg', video: '/assets/show 2.mp4', description: "Couverture de l'élection Miss Mayotte, avec captation événementielle et un montage qui restitue l'émotion de la soirée." },
-      { slug: 'manzaraka-bole', title: 'Manzaraka Bole', tag: 'Événement culturel', description: 'Captation événementielle et mise en images d’un événement culturel.' },
+      { slug: 'miss-mayotte', title: 'Miss Mayotte', tag: 'Élection · Captation événementielle', ...cdnVideo('miss-may'), image: '/assets/zily 1.jpeg', gallery: [cdnVideo('33-miss', { portrait: true })], description: "Couverture de l'élection Miss Mayotte, avec captation événementielle et un montage qui restitue l'émotion de la soirée." },
+      { slug: 'maore-summer-league', title: 'Maore Summer League', tag: 'Basket · Captation événementielle', ...cdnVideo('msl-final'), gallery: [cdnVideo('msl-1'), cdnVideo('msl-draft')], description: "Captation de la Maore Summer League : l'énergie des matchs, le public et les temps forts de la compétition." },
+      { slug: 'inauguration-terre-et-eau', title: 'Inauguration Terre et Eau', tag: 'Inauguration · Film institutionnel', ...cdnVideo('inauguration-t-e'), gallery: [cdnVideo('terre-et-eau'), cdnVideo('institu')], description: "Film institutionnel pour l'inauguration de Terre et Eau. Captation officielle et montage institutionnel premium." },
+      { slug: 'miss-grand-nord', title: 'Miss Grand Nord', tag: 'Élection · Tournage', ...cdnVideo('miss-grand-nord-2'), description: 'Tournage autour de l’élection Miss Grand Nord.' },
+      { slug: 'manzaraka-bole', title: 'Manzaraka Bole', tag: 'Événement culturel · Live', ...cdnVideo('terrel'), description: 'Captation événementielle et mise en images d’un événement culturel.' },
       { slug: 'journee-maore-jet', title: 'Journée Maore Jet', tag: 'Sortie · Captation', video: '/assets/Infinity yacht.mp4', description: 'Images de la journée Maore Jet, entre ambiance nautique et moments partagés.' },
       { slug: 'photo-zily', title: 'Photo Zily', tag: 'Couverture événementielle', image: '/assets/Zily 2.jpeg', description: 'Portrait et couverture photographique autour de Zily.' },
     ],
@@ -51,12 +60,15 @@ const categoryPages = {
     accents: ['CLIP', 'DIRECTION ARTISTIQUE', 'MAKING OF', 'CONTENT CREATION'],
     previous: { to: '/evenementiel', label: 'Événementiel' },
     next: { to: '/immobilier', label: 'Immobilier' },
+    showreel: cdnVideo('clip'),
     cards: [
       { slug: 'infinity', title: 'INFINITY', tag: 'MHD · Roubaba · Joe Dwet Filet · Bridge · Jayanay King', image: '/assets/Design sans titre (1).png', description: 'Un clip lifestyle cinématographique, porté par une direction artistique soignée et plusieurs artistes.' },
-      { slug: 'samani-mode', title: 'SAMANI Mode', tag: 'Clip officiel', image: '/assets/Joe 1.jpeg', description: 'Production audiovisuelle et univers visuel pour la marque SAMANI.' },
-      { slug: 'nassrane', title: 'Nassrane', tag: 'Clip', description: 'Projet de clip musical. Visuel du projet à compléter.' },
-      { slug: 'aye', title: 'Aye', tag: 'Clip', description: 'Projet de clip musical. Visuel du projet à compléter.' },
-      { slug: 'autres-productions', title: 'Autres productions', tag: 'Tournage · Making-of', description: 'Autres projets de clips, tournages et making-of. Visuels à compléter.' },
+      { slug: 'la-maison-samani', title: 'La Maison SAMANI', ...cdnVideo('chambre', { portrait: true }), gallery: [cdnVideo('table', { portrait: true }), cdnVideo('samaani-salon', { portrait: true })], description: 'Production audiovisuelle et univers visuel pour La Maison SAMANI.' },
+      { slug: 'tereza', title: 'Tereza', tag: 'Clip officiel', ...cdnVideo('tereza-off'), description: 'Clip officiel réalisé par Hustler Vision.' },
+      { slug: 'ila', title: 'Ila', tag: 'Clip', ...cdnVideo('clip-ila'), description: 'Clip musical réalisé par Hustler Vision.' },
+      { slug: 'nassrane', title: 'Nassrane', tag: 'Clip', ...cdnVideo('nassrane', { portrait: true }), description: 'Projet de clip musical.' },
+      { slug: 'aye', title: 'Aye', tag: 'Clip', ...cdnVideo('ayte', { portrait: true }), description: 'Projet de clip musical.' },
+      { slug: 'autres-productions', title: 'Autres productions', tag: 'Podcast · Réseaux sociaux · Making-of', ...cdnVideo('podcast-contenenu-reseua', { portrait: true }), description: 'Autres projets : podcast, contenus pour les réseaux sociaux, tournages et making-of.' },
     ],
   },
   immobilier: {
@@ -68,10 +80,10 @@ const categoryPages = {
     previous: { to: '/clips', label: 'Clips' },
     next: { to: '/evenementiel', label: 'Événementiel' },
     cards: [
-      { slug: 'villa-contemporaine', title: 'Villa contemporaine', tag: 'Film immobilier', description: 'Film immobilier mettant en valeur une villa contemporaine. Visuel du projet à compléter.' },
-      { slug: 'residence-de-prestige', title: 'Résidence de prestige', tag: 'Film · Photographie', description: 'Photographie et film d’une résidence de prestige. Visuel du projet à compléter.' },
-      { slug: 'vue-aerienne', title: 'Vue aérienne', tag: 'Drone · Mise en valeur', description: 'Prise de vue aérienne et mise en valeur des espaces. Visuel du projet à compléter.' },
-      { slug: 'interieur', title: 'Intérieur', tag: 'Visite · Présentation', description: 'Visite filmée et présentation des espaces intérieurs. Visuel du projet à compléter.' },
+      { slug: 'chambre', title: 'Chambre', tag: 'Photographie immobilière', image: cdn('immo-chambre.jpg'), gallery: immoPhotos('immo-chambre.jpg'), description: 'Photographie d’intérieur : la chambre, mise en valeur de la lumière et de la décoration.' },
+      { slug: 'salon', title: 'Salon', tag: 'Photographie immobilière', image: cdn('immo-salon.jpg'), gallery: immoPhotos('immo-salon.jpg'), description: 'Photographie d’intérieur : le salon et son coin télévision.' },
+      { slug: 'sejour-cuisine', title: 'Séjour & cuisine', tag: 'Photographie immobilière', image: cdn('immo-sejour-cuisine.jpg'), gallery: immoPhotos('immo-sejour-cuisine.jpg'), description: 'Photographie d’intérieur : le séjour ouvert sur la cuisine.' },
+      { slug: 'salle-a-manger', title: 'Salle à manger', tag: 'Photographie immobilière', image: cdn('immo-salle-a-manger.jpg'), gallery: immoPhotos('immo-salle-a-manger.jpg'), description: 'Photographie d’intérieur : la salle à manger.' },
     ],
   },
 };
@@ -255,21 +267,35 @@ function CategoryPage({ page, category }) {
         </div>
       </header>
 
+      {page.showreel && (
+        <video
+          className="category-showreel"
+          src={page.showreel.video}
+          poster={page.showreel.poster}
+          controls
+          playsInline
+          preload="metadata"
+        />
+      )}
+
       <div className="grid-shell">
-        {page.cards.map((card) => (
-          <Link
-            key={card.slug}
-            to={`/projets/${category}/${card.slug}`}
-            className={`media-card${card.image ? '' : ' image-placeholder'}`}
-            style={card.image ? { backgroundImage: `linear-gradient(180deg, rgba(15, 9, 9, 0.05), rgba(15, 9, 9, 0.82)), url('${card.image}')` } : undefined}
-          >
-            <div className="media-card-caption">
-              <strong>{card.title}</strong>
-              <span>{card.tag}</span>
-            </div>
-            <span className="media-card-arrow" aria-hidden="true">→</span>
-          </Link>
-        ))}
+        {page.cards.map((card) => {
+          const cover = card.image ?? card.poster;
+          return (
+            <Link
+              key={card.slug}
+              to={`/projets/${category}/${card.slug}`}
+              className={`media-card${cover ? '' : ' image-placeholder'}`}
+              style={cover ? { backgroundImage: `linear-gradient(180deg, rgba(15, 9, 9, 0.05), rgba(15, 9, 9, 0.82)), url('${cover}')` } : undefined}
+            >
+              <div className="media-card-caption">
+                <strong>{card.title}</strong>
+                {card.tag && <span>{card.tag}</span>}
+              </div>
+              <span className="media-card-arrow" aria-hidden="true">→</span>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="page-nav-row">
@@ -298,11 +324,11 @@ function ProjectDetailPage() {
     <article className="project-detail container">
       <div className="crumbs"><Link to="/">Accueil</Link> / <Link to={`/${category}`}>{page.breadcrumb}</Link> / {project.title}</div>
       <h1>{project.title}</h1>
-      <p className="project-detail-tag">{project.tag}</p>
+      {project.tag && <p className="project-detail-tag">{project.tag}</p>}
       {project.video ? (
-        <video className="project-detail-media" src={project.video} controls playsInline preload="metadata" poster={project.image} />
+        <video className={`project-detail-media${project.portrait ? ' is-portrait' : ''}`} src={project.video} controls playsInline preload="metadata" poster={project.poster ?? project.image} />
       ) : project.image ? (
-        <img className="project-detail-media" src={project.image} alt={project.title} />
+        <img className={`project-detail-media${project.portrait ? ' is-portrait' : ''}`} src={project.image} alt={project.title} />
       ) : (
         <div className="project-detail-media image-placeholder" role="img" aria-label={`Visuel à compléter pour ${project.title}`} />
       )}
@@ -310,6 +336,32 @@ function ProjectDetailPage() {
         <span className="eyebrow">À propos du projet</span>
         <p>{project.description}</p>
       </div>
+      {project.gallery?.length > 0 && (
+        <section className="project-gallery" aria-label="Du même projet">
+          <span className="eyebrow">Du même projet</span>
+          <div className="project-gallery-grid">
+            {project.gallery.map((item) => (item.video ? (
+              <video
+                key={item.video}
+                className={`project-gallery-video${item.portrait ? ' is-portrait' : ''}`}
+                src={item.video}
+                poster={item.poster}
+                controls
+                playsInline
+                preload="none"
+              />
+            ) : (
+              <img
+                key={item.image}
+                className="project-gallery-image"
+                src={item.image}
+                alt={`${project.title} — autre vue`}
+                loading="lazy"
+              />
+            )))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }
