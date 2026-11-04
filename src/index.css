@@ -148,6 +148,20 @@ p {
   text-shadow: 0 0 20px rgba(233, 184, 77, 0.24);
 }
 
+.topbar .brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.brand-logo {
+  display: block;
+  width: 96px;
+  height: 56px;
+  flex: 0 0 auto;
+  pointer-events: none;
+}
+
 .main-nav {
   display: flex;
   align-items: center;
@@ -910,6 +924,17 @@ img.project-detail-media:not(.is-portrait) {
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.8;
+}
+
+.contact-stage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.contact-stage > .contact-page {
+  position: relative;
+  z-index: 1;
 }
 
 .contact-page {

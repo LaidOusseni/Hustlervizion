@@ -5,8 +5,11 @@ import IntroSection from './components/IntroSection';
 import HeroLanding from './components/HeroLanding';
 import ShaderBackground from './components/ui/ShaderBackground';
 import TiltedGridHero from './components/ui/TiltedGridHero';
+import ParallaxUnfurlingGallery from './components/ui/ParallaxUnfurlingGallery';
+import StaticLogo from './components/ui/StaticLogo';
 import MediaCard from './components/MediaCard';
 import { cdn, cdnVideo } from './data/media';
+import { GALLERY_IMAGES } from './data/galleryImages';
 
 const navItems = [
   { to: '/', label: 'Accueil' },
@@ -114,7 +117,8 @@ function TopBar() {
     <header className="topbar">
       <div className="topbar-inner">
         <NavLink to="/" end className="brand-mark" aria-label="Hustler Vision — Accueil" onClick={() => setMenuOpen(false)}>
-          HV.
+          <span className="brand-logo" aria-hidden="true"><StaticLogo /></span>
+          <span>HV.</span>
         </NavLink>
         <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Navigation principale">
           {navItems.map((item) => (
@@ -355,15 +359,25 @@ function ProjectDetailPage() {
 
 function ContactPage() {
   return (
-    <section className="contact-page container">
-      <div className="contact-panel">
-        <p className="crumbs"><Link to="/">Accueil</Link> / Contact</p>
-        <span className="eyebrow">Parlons de votre projet</span>
-        <h1>Contact</h1>
-        <p>Nous créons des univers visuels dans les moments qui comptent. Écrivez-nous pour donner vie à votre projet.</p>
-        <a href="mailto:hello@hustlervizion.com" className="cta-button">hello@hustlervizion.com</a>
-      </div>
-    </section>
+    <div className="contact-stage">
+      <ParallaxUnfurlingGallery
+        images={GALLERY_IMAGES}
+        grow={false}
+        ambient
+        offset={['start end', 'end start']}
+        imageOpacity={0.45}
+        style={{ zIndex: 0 }}
+      />
+      <section className="contact-page container">
+        <div className="contact-panel">
+          <p className="crumbs"><Link to="/">Accueil</Link> / Contact</p>
+          <span className="eyebrow">Parlons de votre projet</span>
+          <h1>Contact</h1>
+          <p>Nous créons des univers visuels dans les moments qui comptent. Écrivez-nous pour donner vie à votre projet.</p>
+          <a href="mailto:hello@hustlervizion.com" className="cta-button">hello@hustlervizion.com</a>
+        </div>
+      </section>
+    </div>
   );
 }
 

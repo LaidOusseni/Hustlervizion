@@ -2,9 +2,12 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import RotatingLogo from './RotatingLogo';
+import ParallaxUnfurlingGallery from './ui/ParallaxUnfurlingGallery';
+import { GALLERY_IMAGES } from '../data/galleryImages';
 
 const HeroLanding = () => (
   <section id="home" className="hero-section">
+    <ParallaxUnfurlingGallery images={GALLERY_IMAGES} grow={false} ambient style={{ zIndex: -2 }} />
     <div className="hero-aura" aria-hidden="true" />
     <div className="hero-content container">
       <div className="hero-logo" aria-label="Logo 3D Hustler Vision">
