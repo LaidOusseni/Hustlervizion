@@ -112,13 +112,17 @@ function ScrollToTop() {
 
 function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoReady, setLogoReady] = useState(false);
 
   return (
     <header className="topbar">
       <div className="topbar-inner">
         <NavLink to="/" end className="brand-mark" aria-label="Hustler Vision — Accueil" onClick={() => setMenuOpen(false)}>
-          <span className="brand-logo" aria-hidden="true"><StaticLogo /></span>
-          <span>HV.</span>
+          <span className="brand-logo" aria-hidden="true">
+            {/* « HV. » tient la place du logo 3D le temps qu'il se charge. */}
+            <span className={`brand-fallback${logoReady ? ' is-hidden' : ''}`}>HV.</span>
+            <StaticLogo onReady={() => setLogoReady(true)} />
+          </span>
         </NavLink>
         <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Navigation principale">
           {navItems.map((item) => (
@@ -178,8 +182,12 @@ function SiteFooter() {
         </div>
       </div>
       <div className="footer-bottom container">
-        <span>© {new Date().getFullYear()} Hustler Vision. Tous droits réservés.</span>
-        <span>Mayotte · International</span>
+        <span className="footer-copy">© {new Date().getFullYear()} Hustler Vision. Tous droits réservés.</span>
+        <a className="footer-credit" href="https://5hc.fr" target="_blank" rel="noreferrer" aria-label="Made by 5HC — 5hc.fr">
+          <span>Made by 5HC</span>
+          <img src="/assets/5HC-small.png" alt="" width="28" height="19" loading="lazy" />
+        </a>
+        <span className="footer-place">Mayotte · International</span>
       </div>
     </footer>
   );
@@ -389,18 +397,18 @@ function LegalPage({ privacy = false }) {
       <h1>{privacy ? 'Politique de confidentialité' : 'Mentions légales'}</h1>
       {privacy ? (
         <>
-          <section><h2>Responsable du traitement</h2><p>Hustler Vision — identité juridique et coordonnées de l’éditeur à compléter avant publication.</p></section>
-          <section><h2>Données et stockage local</h2><p>Le site ne comporte pas de formulaire de collecte. Le navigateur peut enregistrer la préférence d’affichage de l’écran d’introduction (« hv-intro-seen ») dans son stockage local. Cette donnée reste sur l’appareil et n’est pas un cookie.</p></section>
-          <section><h2>Ressources externes</h2><p>Les polices de caractères sont chargées depuis Google Fonts. Lors de leur chargement, votre navigateur contacte les serveurs de Google et leur transmet les informations techniques nécessaires à la requête, dont votre adresse IP. Les conditions et la politique de confidentialité du fournisseur s’appliquent à ce service.</p></section>
-          <section><h2>Contact par e-mail</h2><p>Un lien e-mail ouvre votre logiciel de messagerie. Les informations que vous choisissez d’envoyer sont traitées via votre messagerie et ne sont pas transmises par un formulaire sur ce site.</p></section>
-          <section><h2>Vos droits</h2><p>Pour toute demande relative à vos données, contactez <a href="mailto:hello@hustlervizion.com">hello@hustlervizion.com</a>. L’identité et l’adresse du responsable doivent être complétées pour finaliser cette information.</p></section>
+          <section><h2>Aucune donnée collectée</h2><p>Ce site ne collecte aucune donnée personnelle : il ne comporte ni formulaire, ni compte utilisateur, ni cookie, ni outil de mesure d’audience ou de suivi publicitaire.</p></section>
+          <section><h2>Stockage local</h2><p>Votre navigateur peut mémoriser sur votre appareil que l’écran d’introduction a déjà été vu (« hv-intro-seen »). Cette information ne quitte jamais votre appareil et n’est pas un cookie.</p></section>
+          <section><h2>Ressources externes</h2><p>Pour s’afficher, le site charge des polices (Google Fonts) et des médias (images et vidéos) depuis des serveurs tiers. Comme pour tout site web, ces serveurs reçoivent les informations techniques de la requête, dont votre adresse IP. Le site n’exploite pas ces informations.</p></section>
+          <section><h2>Questions</h2><p>Pour toute question sur le site ou sur cette politique, écrivez à <a href="mailto:contact@5hc.fr">contact@5hc.fr</a>.</p></section>
         </>
       ) : (
         <>
-          <p className="legal-notice">Certaines informations obligatoires n’ont pas été fournies. Les champs indiqués doivent être complétés par l’éditeur avant la mise en ligne définitive.</p>
-          <section><h2>Éditeur du site</h2><p>Nom commercial : Hustler Vision<br />Dénomination sociale : [à compléter]<br />Forme juridique : [à compléter]<br />Adresse du siège social : [à compléter]<br />Numéro d’immatriculation (SIREN/SIRET) : [à compléter]<br />Directeur ou directrice de la publication : [à compléter]<br />Contact : <a href="mailto:hello@hustlervizion.com">hello@hustlervizion.com</a></p></section>
-          <section><h2>Hébergement</h2><p>Nom et coordonnées de l’hébergeur : [à compléter par l’éditeur].</p></section>
-          <section><h2>Propriété intellectuelle</h2><p>Les contenus de ce site sont à utiliser avec l’autorisation de leurs ayants droit. Toute information complémentaire sur les crédits ou titulaires de droits est à fournir par l’éditeur.</p></section>
+          <p className="legal-notice">Certaines informations relatives au propriétaire du site n’ont pas été fournies. Les champs indiqués doivent être complétés avant la mise en ligne définitive.</p>
+          <section><h2>Propriétaire du site</h2><p>Nom commercial : Hustler Vision<br />Dénomination sociale : [à compléter]<br />Forme juridique : Auto-entreprise<br />Adresse : Mayotte<br />Numéro d’immatriculation (SIREN/SIRET) : [à compléter]<br />Directeur ou directrice de la publication : [à compléter]<br />Contact : <a href="mailto:hello@hustlervizion.com">hello@hustlervizion.com</a></p></section>
+          <section><h2>Conception et réalisation du site</h2><p>Ce site a été conçu et réalisé par <strong>5HC SAS</strong>, société par actions simplifiée au capital de 3 €, dont le siège est situé à Paris (Châtelet). Son activité a débuté le 15 novembre. Les informations relatives à la société sont disponibles sur <a href="https://5hc.fr" target="_blank" rel="noreferrer">5hc.fr</a>.<br />Pour toute question concernant le site : <a href="mailto:contact@5hc.fr">contact@5hc.fr</a></p></section>
+          <section><h2>Hébergement</h2><p>Nom et coordonnées de l’hébergeur : [à compléter].</p></section>
+          <section><h2>Propriété intellectuelle</h2><p>Les contenus de ce site sont à utiliser avec l’autorisation de leurs ayants droit. Toute information complémentaire sur les crédits ou titulaires de droits est à fournir par le propriétaire du site.</p></section>
         </>
       )}
     </article>
