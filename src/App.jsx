@@ -185,7 +185,7 @@ function SiteFooter() {
         <span className="footer-copy">© {new Date().getFullYear()} Hustler Vision. Tous droits réservés.</span>
         <a className="footer-credit" href="https://5hc.fr" target="_blank" rel="noreferrer" aria-label="Made by 5HC — 5hc.fr">
           <span>Made by 5HC</span>
-          <img src="/assets/5HC-small.png" alt="" width="28" height="19" loading="lazy" />
+          <img src="/assets/5HC-small.png" alt="" width="56" height="37" loading="lazy" />
         </a>
         <span className="footer-place">Mayotte · International</span>
       </div>

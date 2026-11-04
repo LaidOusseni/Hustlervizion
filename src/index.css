@@ -1146,7 +1146,7 @@ img.project-detail-media:not(.is-portrait) {
   gap: 8px;
   color: rgba(255, 255, 255, 0.5);
   font-family: 'Space Grotesk', var(--body);
-  font-size: 1.1rem;
+  font-size: 14.6px;
   font-weight: 500;
   letter-spacing: 0.02em;
   transition: color 0.2s ease;
@@ -1158,7 +1158,7 @@ img.project-detail-media:not(.is-portrait) {
 
 .footer-credit img {
   display: block;
-  width: 28px;
+  width: 56px;
   height: auto;
   opacity: 0.85;
 }
